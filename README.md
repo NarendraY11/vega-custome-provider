@@ -1,3 +1,3 @@
-# Vega Custom Provider
+# Watch Hentai Series Online In High Quality – Free Hentai
 
-Custom Vega provider files and generated distribution.
+Generated Vega provider package for https://hentai.pro/. See `INTEGRATION.md` for the safe manifest/build workflow.
