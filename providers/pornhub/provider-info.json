@@ -1,0 +1,17 @@
+{
+  "generatorVersion": "2.0",
+  "source": "https://www.pornhub.com/",
+  "capabilities": {
+    "catalog": true,
+    "search": true,
+    "metadata": true,
+    "episodes": false,
+    "streams": true,
+    "webViewFallback": true
+  },
+  "hints": {
+    "categoryCount": 1,
+    "detailCount": 0,
+    "apiHints": []
+  }
+}
