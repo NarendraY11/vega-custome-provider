@@ -1,0 +1,17 @@
+{
+  "generatorVersion": "2.0",
+  "source": "https://hentai.pro/",
+  "capabilities": {
+    "catalog": true,
+    "search": true,
+    "metadata": true,
+    "episodes": true,
+    "streams": false,
+    "webViewFallback": true
+  },
+  "hints": {
+    "categoryCount": 14,
+    "detailCount": 12,
+    "apiHints": []
+  }
+}
