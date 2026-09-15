@@ -1,50 +1,6 @@
 "use strict";Object.defineProperty(exports,"__esModule",{value:true});
 function absolute(value,pageUrl){try{return new URL(value,pageUrl).href;}catch(e){return "";}}
 function text(value){return value.replace(/\s+/g," ").trim();}
-function jsonLd(html){
-  var out=[];
-  var re=/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
-  var m;
-  while((m=re.exec(html))){
-    try{
-      var v=JSON.parse(m[1].trim());
-      if(Array.isArray(v)) out.push.apply(out,v);
-      else if(v&&Array.isArray(v["@graph"])) out.push.apply(out,v["@graph"]);
-      else out.push(v);
-    }catch(e){}
-  }
-  return out;
-}
-var getMeta=async function(_a){
-  var link=_a.link,providerContext=_a.providerContext;
-  var axios=providerContext.axios,cheerio=providerContext.cheerio,commonHeaders=providerContext.commonHeaders,openWebView=providerContext.openWebView;
-  var html="";
-  try{html=String((await axios.get(link,{headers:commonHeaders,timeout:15000})).data);}catch(e){}
-  var parse=function(source){
-    var $=cheerio.load(source),data=jsonLd(source);
-    var media=data.find(function(x){var type=x&&x["@type"]?String(x["@type"]):"";return /movie|tvseries|tvseason|creativework/i.test(type);})||data[0]||{};
-    var title=text(String(media.name||$('meta[property="og:title"]').attr("content")||$("h1").first().text()||$("title").text()||"Untitled"));
-    var synopsis=text(String(media.description||$('meta[property="og:description"]').attr("content")||$('meta[name="description"]').attr("content")||""));
-    var rawImage=(Array.isArray(media.image)?media.image[0]:media.image)||$('meta[property="og:image"]').attr("content")||$('meta[name="twitter:image"]').attr("content")||$("img").first().attr("src")||"";
-    var image=absolute(String(rawImage),link);
-    var mediaUrlMatch=String(media.url||"").match(/tt\d{5,10}/);
-    var sourceImdbMatch=source.match(/\btt\d{5,10}\b/);
-    var imdbId=mediaUrlMatch?mediaUrlMatch[0]:(sourceImdbMatch?sourceImdbMatch[0]:"");
-    var tags=Array.isArray(media.genre)?media.genre.map(String):(media.genre?[String(media.genre)]:[]);
-    var cast=Array.isArray(media.actor)?media.actor.map(function(x){return String(x&&x.name?x.name:x);}).filter(Boolean):[];
-    var anchors=$("a[href]").map(function(_,e){return{title:text($(e).attr("title")||$(e).text()),link:absolute($(e).attr("href")||"",link)};}).get().filter(function(x){return x.title&&x.link;});
-    var seasons=anchors.filter(function(x){return /\bseason\s*\d+\b/i.test(x.title)||/\/season(?:[-_\/] |\d)/i.test(x.link);}).slice(0,30);
-    var episodes=anchors.filter(function(x){return /\b(?:episode|ep|e)\s*\d+\b/i.test(x.title)||/\/(?:episode|ep)(?:[-_\/] |\d)/i.test(x.link);}).slice(0,80);
-    var directLinks=episodes.map(function(x){return{title:x.title,link:x.link,type:"series"};});
-    var linkList=seasons.map(function(x){return{title:x.title,episodesLink:x.link};});
-    if(!linkList.length&&directLinks.length)linkList.push({title:"Episodes",directLinks:directLinks});
-    var mediaType=media["@type"]?String(media["@type"]):"";
-    var type=/tv|series|show|season|episode/i.test(mediaType)||seasons.length>0||episodes.length>0?"series":"movie";
-    return{title:title,synopsis:synopsis,image:image,imdbId:imdbId,type:type,tags:tags,cast:cast,linkList:linkList};
-  };
-  var parsed=parse(html);
-  if(!html||parsed.title==="Untitled"||(!parsed.image&&!parsed.synopsis)){
-    try{var rendered=await openWebView(link,{title:"Render item",description:"Use the rendered page when normal HTTP did not expose metadata."});parsed=parse(rendered.data);}catch(e){}
-  }
-  return{title:parsed.title||"Untitled",synopsis:parsed.synopsis||"",image:parsed.image||"",imdbId:parsed.imdbId||"",type:parsed.type,tags:parsed.tags,cast:parsed.cast,linkList:parsed.linkList,webUrl:link};
-};exports.getMeta=getMeta;
+function jsonLd(html){var out=[];var re=/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;var m;while((m=re.exec(html))){try{var v=JSON.parse(m[1].trim());if(Array.isArray(v))out.push.apply(out,v);else if(v&&Array.isArray(v["@graph"]))out.push.apply(out,v["@graph"]);else out.push(v);}catch(e){}}return out;}
+var getMeta=async function(_a){var link=_a.link,providerContext=_a.providerContext;var axios=providerContext.axios,cheerio=providerContext.cheerio,commonHeaders=providerContext.commonHeaders,openWebView=providerContext.openWebView;var html="";try{html=String((await axios.get(link,{headers:commonHeaders,timeout:15000})).data);}catch(e){}
+var parse=function(source){var $=cheerio.load(source),data=jsonLd(source);var media=data.find(function(x){var type=x&&x["@type"]?String(x["@type"]):"";return /movie|tvseries|tvseason|creativework/i.test(type);})||data[0]||{};var title=text(String(media.name||$('meta[property="og:title"]').attr("content")||$("h1").first().text()||$("title").text()||"Untitled"));var synopsis=text(String(media.description||$('meta[property="og:description"]').attr("content")||$('meta[name="description"]').attr("content")||""));var rawImage=(Array.isArray(media.image)?media.image[0]:media.image)||$('meta[property="og:image"]').attr("content")||$('meta[name="twitter:image"]').attr("content")||$("img").first().attr("src")||"";var image=absolute(String(rawImage),link);var mediaUrlMatch=String(media.url||"").match(/tt\d{5,10}/);var sourceImdbMatch=source.match(/\btt\d{5,10}\b/);var imdbId=mediaUrlMatch?mediaUrlMatch[0]:(sourceImdbMatch?sourceImdbMatch[0]:"");var tags=Array.isArray(media.genre)?media.genre.map(String):(media.genre?[String(media.genre)]:[]);var cast=Array.isArray(media.actor)?media.actor.map(function(x){return String(x&&x.name?x.name:x);}).filter(Boolean):[];var anchors=$("a[href]").map(function(_,e){return{title:text($(e).attr("title")||$(e).text()),link:absolute($(e).attr("href")||"",link)};}).get().filter(function(x){return x.title&&x.link;});var seasons=anchors.filter(function(x){return /\bseason\s*\d+\b/i.test(x.title)||/\/season(?:[-_\/] |\d)/i.test(x.link);}).slice(0,30);var episodes=anchors.filter(function(x){return /\b(?:episode|ep|e)\s*\d+\b/i.test(x.title)||/\/(?:episode|ep)(?:[-_\/] |\d)/i.test(x.link);}).slice(0,80);var directLinks=episodes.map(function(x){return{title:x.title,link:x.link,type:"series"};});var linkList=seasons.map(function(x){return{title:x.title,episodesLink:x.link};});if(!linkList.length&&directLinks.length)linkList.push({title:"Episodes",directLinks:directLinks});var mediaType=media["@type"]?String(media["@type"]):"";var type=/tv|series|show|season|episode/i.test(mediaType)||seasons.length>0||episodes.length>0?"series":"movie";return{title:title,synopsis:synopsis,image:image,imdbId:imdbId,type:type,tags:tags,cast:cast,linkList:linkList};};var parsed=parse(html);if(!html||parsed.title==="Untitled"||(!parsed.image&&!parsed.synopsis)){try{var rendered=await openWebView(link,{title:"Render item",description:"Use the rendered page when normal HTTP did not expose metadata."});parsed=parse(rendered.data);}catch(e){}}return{title:parsed.title||"Untitled",synopsis:parsed.synopsis||"",image:parsed.image||"",imdbId:parsed.imdbId||"",type:parsed.type,tags:parsed.tags,cast:parsed.cast,linkList:parsed.linkList,webUrl:link};};exports.getMeta=getMeta;
