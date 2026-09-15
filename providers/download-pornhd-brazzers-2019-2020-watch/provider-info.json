@@ -1,0 +1,20 @@
+{
+  "generatorVersion": "2.0",
+  "source": "https://en8.pornhd8k.me/",
+  "capabilities": {
+    "catalog": true,
+    "search": true,
+    "metadata": true,
+    "episodes": false,
+    "streams": true,
+    "webViewFallback": true
+  },
+  "hints": {
+    "categoryCount": 14,
+    "detailCount": 0,
+    "apiHints": [
+      "http://javstream.to/",
+      "https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"
+    ]
+  }
+}
