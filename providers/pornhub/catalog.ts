@@ -1,5 +1,7 @@
-import { Provider, Video } from "@vega/core";
+export const catalog = [
+  { title: "Home", filter: "https://www.pornhub.com/" },
+  { title: "Categories", filter: "https://www.pornhub.com/categories" },
+];
+export const genres = [
 
-export default async function catalog(provider: Provider): Promise<Video[]> {
-  return [];
-}
+];
